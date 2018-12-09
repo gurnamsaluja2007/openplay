@@ -1,4 +1,9 @@
 import serial
+import json
+import time
+import uuid
+import random
+from datetime import datetime
 from upm import pyupm_jhd1313m1
 
 ard = serial.Serial('/dev/ttyS2', 9600,timeout=1)
@@ -9,8 +14,30 @@ def showAngle(angle):
 	lcd.setCursor(0, 0)
 	#lcd.write(humid)
 	#lcd.setCursor(1, 0)
-	lcd.write("Digital_val:" + angle + " Degree")
+	lcd.write("Dig_val:" + angle + " Deg")
 	lcd.setColor(255, 180, 180)
+
+def report_val(temp_val):
+    '''
+    Write out temperature to a random json file
+    '''
+    #v = fake_fan_sensor()
+    fname = str(uuid.uuid4()) + ".json"
+    d = {
+        'metric': {
+            'name': 'Furnace Temperature',
+            'source': 'sensor_1',
+            'kind': 'gauge',
+            'unit': 'Farenheit',
+            'value': temp_val,
+            'timestamp': int(time.time()),
+            'date': datetime.utcnow().strftime("%Y-%m-%d"),
+            'time': datetime.utcnow().strftime("%H-%M-%S")
+        }
+    }
+    with open(fname, 'w') as fp:
+        json.dump(d, fp)
+        print("Recorded furnace temp at %s Farenheit in %s" %(temp_val, fname))
 
 if __name__ == '__main__':
 	print("Welcome to my world!!!")
@@ -18,11 +45,12 @@ if __name__ == '__main__':
         #ard.write(b'helloos')
 	try:
 		while True:
-                        #ard.write(b'helloos')
-                        #print("Ardout name ",ard.name)
+                        time.sleep(1)
 			ardOut = ard.readline()
                         print("Ardout ",ardOut)
 		        showAngle(ardOut)
+                        #report_val(ardOut)
+                        time.sleep(1)
 			#if ardOut.find("Digital_val:") != -1:
 			#	showAngle("11")
 	except KeyboardInterrupt:
