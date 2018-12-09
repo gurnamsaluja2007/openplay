@@ -1,0 +1,49 @@
+This is a beta version of the agent. Also included is a test furnace app showing how to output metric data for the agent
+
+How to run the agent:
+./agent --device test-device-1 -ca_certs roots.pem -private_key rsa_private.pem
+
+How to run the furnace app:
+
+python furnace.py
+
+What to expect:
+The furnace app should output a furnace fan or temperature metric randomnly every 5 seconds
+The metric is written out as a uniquely named .json file in the same directory
+The agent should read the json file, validate it, transmit the metric data over the network and delete the file
+
+Sample output from furnace.py:
+
+$ python test_app/furnace.py
+Furnace synced at loop: 0
+Recorded temperature sensor at 524 Farenheit in 83fc43d2-69ca-4a49-9476-45cbaac4e331.json
+Recorded fan running at 101 RPM in da0f74bf-10d4-420d-8e32-1b3de70fb291.json
+Recorded fan running at 137 RPM in 13e90f50-a226-4e62-834f-c05debcab496.json
+Recorded temperature sensor at 525 Farenheit in c732e4ec-a851-441d-9229-6428ee47e4ca.json
+Recorded fan running at 127 RPM in c39186f5-9855-47aa-8be9-2aa6b5d858cf.json
+Recorded fan running at 283 RPM in 510d4b6f-3547-48d7-81e8-c83cfb5d2347.json
+Recorded fan running at 213 RPM in 5a2e3e6a-07a1-4275-9f8a-291355e40ba4.json
+Recorded fan running at 258 RPM in 0b9fff0e-ebae-46d6-861c-bf1c2a7ff795.json
+Recorded temperature sensor at 679 Farenheit in c4e54f3b-0e9d-46ed-8774-faedfa90cb8c.json
+
+Sample output from agent:
+
+$ ./agent --device test-device-1 -ca_certs roots.pem -private_key rsa_private.pem
+2018/12/02 14:56:33 [main] Entered
+2018/12/02 14:56:33 [main] Flags
+2018/12/02 14:56:33 [main] Loading root Certificate Authority list
+2018/12/02 14:56:33 [main] Creating TLS Config
+2018/12/02 14:56:33 [main] Load Private Key
+2018/12/02 14:56:33 [main] Parse Private Key
+2018/12/02 14:56:33 [main] Sign JWT Token
+2018/12/02 14:56:33 [main] Creating MQTT Client Options
+2018/12/02 14:56:33 [main] MQTT Client Connecting
+2018/12/02 14:56:33 [main] Creating Subscription
+2018/12/02 14:56:33 [handler] Topic: /devices/test-device-1/config
+2018/12/02 14:56:33 [handler] Payload: This is a config payload, confirm you saw this
+2018/12/02 14:56:34 Successfully Opened 83fc43d2-69ca-4a49-9476-45cbaac4e331.json
+2018/12/02 14:56:34 83fc43d2-69ca-4a49-9476-45cbaac4e331.json contains /device Metric
+2018/12/02 14:56:34 Transmitted Metric and deleted 83fc43d2-69ca-4a49-9476-45cbaac4e331.json
+2018/12/02 14:56:34 Successfully Opened da0f74bf-10d4-420d-8e32-1b3de70fb291.json
+2018/12/02 14:56:34 da0f74bf-10d4-420d-8e32-1b3de70fb291.json contains /device Metric
+2018/12/02 14:56:34 Transmitted Metric and deleted da0f74bf-10d4-420d-8e32-1b3de70fb291.json
